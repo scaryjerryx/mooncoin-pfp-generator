@@ -158,9 +158,16 @@ async function generateAndSendPFP(chatId, userId) {
         const randomCaption = funnyCaptions[Math.floor(Math.random() * funnyCaptions.length)];
         
         console.log("Sending photo to Telegram...");
+        
+        const shareUrl = "https://x.com/intent/tweet?text=" + "I%20just%20got%20MOONED!%20%F0%9F%8D%91%F0%9F%9A%80%20Get%20your%20official%20Mooncoin%20spacesuit%20PFP%20from%20the%20portal!%20%24MOON";
         await bot.sendPhoto(chatId, finalImageBuffer, { 
-            caption: `${randomCaption}\n\nClick below to go again:`,
-            reply_markup: keyboardLayout.reply_markup
+            caption: `${randomCaption}\n\nClick below to go again or share your PFP:`,
+            reply_markup: {
+                inline_keyboard: [
+                    [{ text: "Moon Me Again 🍑", callback_data: "generate_pfp" }],
+                    [{ text: "🐦 Share on X", url: shareUrl }]
+                ]
+            }
         });
         console.log("Photo sent successfully.");
 
