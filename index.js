@@ -9,6 +9,9 @@ const bot = new TelegramBot(token, { polling: true });
 
 console.log('Mooncoin PFP Generator is running...');
 
+const userCooldowns = new Map();
+const COOLDOWN_MS = 15000;
+
 // The Button Layout
 const keyboardLayout = {
     reply_markup: {
@@ -42,6 +45,19 @@ bot.on('callback_query', async (query) => {
         const chatId = query.message.chat.id;
         const userId = query.from.id;
 
+        // --- RATE LIMIT CHECK ---
+        const lastUsed = userCooldowns.get(userId) || 0;
+        const timeRemaining = COOLDOWN_MS - (Date.now() - lastUsed);
+        if (timeRemaining > 0) {
+            const seconds = Math.ceil(timeRemaining / 1000);
+            return bot.answerCallbackQuery(query.id, { 
+                text: `⏳ Whoa there astronaut! Please wait ${seconds} seconds.`, 
+                show_alert: true 
+            });
+        }
+        userCooldowns.set(userId, Date.now());
+        // ------------------------
+
         // Acknowledge button click to stop the loading circle on the button
         bot.answerCallbackQuery(query.id);
         
@@ -51,7 +67,11 @@ bot.on('callback_query', async (query) => {
 
 // 3. Fallback for people who just type the command
 bot.onText(/\/moonme/, async (msg) => {
-    await generateAndSendPFP(msg.chat.id, msg.from.id);
+    const userId = msg.from.id;
+    const lastUsed = userCooldowns.get(userId) || 0;
+    if (Date.now() - lastUsed < COOLDOWN_MS) return; // Silently ignore spam
+    userCooldowns.set(userId, Date.now());
+    await generateAndSendPFP(msg.chat.id, userId);
 });
 
 async function generateAndSendPFP(chatId, userId) {
