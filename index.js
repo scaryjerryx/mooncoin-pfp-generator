@@ -159,7 +159,7 @@ async function generateAndSendPFP(chatId, userId) {
         
         console.log("Sending photo to Telegram...");
         
-        const shareUrl = "https://x.com/intent/tweet?text=" + "I%20just%20got%20MOONED!%20%F0%9F%8D%91%F0%9F%9A%80%20Get%20your%20official%20Mooncoin%20spacesuit%20PFP%20from%20the%20portal!%20%24MOON";
+        const shareUrl = "https://x.com/intent/tweet?text=I%20just%20got%20MOONED!%20%F0%9F%8D%91%F0%9F%9A%80%20Get%20your%20official%20Mooncoin%20spacesuit%20PFP%20from%20the%20portal!%20%24MOON%0A%0AJoin%20us%3A%20t.me%2Fmooncoinonanon";
         await bot.sendPhoto(chatId, finalImageBuffer, { 
             caption: `${randomCaption}\n\nClick below to go again or share your PFP:`,
             reply_markup: {
